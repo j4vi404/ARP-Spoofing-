@@ -142,132 +142,39 @@ Elementos de la red:
 ----------------------------------------------------
 
 ---
+# Parámetros Usados
 
-## ⚙️ Parámetros de Configuración
+## Configuración de Red
 
-### Archivo de Configuración Principal (`config.yaml`)
+| Parámetro | Valor | Descripción |
+|-----------|-------|-------------|
+| **Red Víctima** | 15.0.7.0/24 | VLAN 10 - Segmento de red objetivo |
+| **Red TI** | 15.0.8.0/24 | VLAN 50 - Segmento administrativo |
+| **Enlace P2P** | 10.0.0.0/30 | Conexión entre R-SD y R-STG |
+| **VLAN Nativa** | 888 | VLAN para tráfico no etiquetado |
 
-```yaml
-# Configuración General
-general:
-  log_level: INFO
-  log_file: /var/log/network_tool/app.log
-  max_threads: 10
-  timeout: 30
-  retry_attempts: 3
+## Parámetros de Ataque
 
-# Credenciales de Dispositivos
-credentials:
-  default_username: admin
-  default_password: ${NETWORK_PASSWORD}  # Variable de entorno
-  enable_secret: ${ENABLE_SECRET}
-  ssh_port: 22
-  telnet_port: 23
+### ARP Spoofing
+| Parámetro | Valor | Descripción |
+|-----------|-------|-------------|
+| **IP Objetivo (Víctima)** | 15.0.7.10 | Host a interceptar |
+| **IP Gateway** | 15.0.7.1 | Router/Gateway de la red |
+| **MAC Atacante** | Variable | MAC del equipo atacante |
+| **Intervalo de envío** | 2 segundos | Frecuencia de paquetes ARP falsos |
+| **Modo** | Bidireccional | Envenenamiento víctima ↔ gateway |
 
-# Dispositivos de Red
-devices:
-  - hostname: Core-Switch-01
-    ip: 192.168.1.1
-    device_type: cisco_ios
-    role: core
-    credentials_group: default
-    
-  - hostname: Access-SW-01
-    ip: 192.168.1.10
-    device_type: cisco_ios
-    role: access
-    credentials_group: default
-
-# VLANs a Configurar
-vlans:
-  - id: 10
-    name: IT_Department
-    subnet: 10.10.10.0/24
-    gateway: 10.10.10.1
-    dhcp_pool:
-      start: 10.10.10.100
-      end: 10.10.10.200
-      
-  - id: 20
-    name: Admin
-    subnet: 10.10.20.0/24
-    gateway: 10.10.20.1
-    dhcp_pool:
-      start: 10.10.20.100
-      end: 10.10.20.200
-
-# Políticas de Seguridad
-security_policies:
-  enable_port_security: true
-  max_mac_addresses: 2
-  violation_mode: restrict
-  enable_dhcp_snooping: true
-  enable_dynamic_arp_inspection: true
-  enable_spanning_tree_bpduguard: true
-
-# Auditoría
-audit:
-  enable_compliance_check: true
-  standards:
-    - PCI-DSS
-    - ISO27001
-  generate_pdf_report: true
-  email_reports_to:
-    - admin@empresa.com
-    - security@empresa.com
-
-# Backup
-backup:
-  enable_auto_backup: true
-  backup_path: /backups/network_configs
-  retention_days: 30
-  schedule: "0 2 * * *"  # Cron: 2 AM diario
-```
-
-### Parámetros de Línea de Comandos
-
-
+### DNS Spoofing
+| Parámetro | Valor | Descripción |
+|-----------|-------|-------------|
+| **Dominio falso** | www.ejemplo.com | Dominio a suplantar |
+| **IP falsa** | 15.0.8.100 | IP del servidor malicioso |
+| **Puerto DNS** | 53 | Puerto estándar DNS |
+| **Protocolo** | UDP | Protocolo de transporte |
+| **TTL** | 300 | Tiempo de vida de la respuesta falsa |
 ```
 
 
-### Ejemplos de Uso
-
-
-# Escanear red completa
-python network_tool.py scan --target 192.168.1.0/24 --verbose
-
-# Configurar VLANs en dispositivo específico
-python network_tool.py configure --device Core-Switch-01 --vlan 10,20,30
-
-# Auditoría de seguridad con reporte PDF
-python network_tool.py audit --standard PCI-DSS --output pdf --severity high
-
-# Backup encriptado de todos los dispositivos
-python network_tool.py backup --encrypt --compress --destination /secure/backups/
-
-# Simulación de configuración (dry-run)
-python network_tool.py configure --dry-run --vlan 40
-
-# Restaurar configuración desde backup
-python network_tool.py restore --device Access-SW-01 --backup /backups/2024-02-06/
-
-# Generar reporte de estado mensual
-python network_tool.py report --type monthly --email admin@empresa.com
-```
-```
-
-#### Software Adicional
-
-```bash
-# SSH Client
-OpenSSH >= 8.0
-
-# Git (para clonar repositorio)
-git >= 2.30
-
-# Opcional: Docker
-Docker >= 20.10 (para despliegue en contenedor)
-```
 
 ### Dispositivos de Red Compatibles
 
