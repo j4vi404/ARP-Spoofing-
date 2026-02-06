@@ -25,18 +25,10 @@
 - [Instalación](#-instalación)
 - [Uso y Ejemplos](#-uso-y-ejemplos)
 - [Medidas de Mitigación](#-medidas-de-mitigación)
-- [Troubleshooting](#-troubleshooting)
-- [Contribución](#-contribución)
-- [Licencia](#-licencia)
 
 ---
 
-## 🎯 Objetivo del Script
-
-Este proyecto implementa un script de ARP Spoofing combinado con DNS Spoofing, con fines exclusivamente educativos y de laboratorio, ejecutado en un entorno controlado.
-El objetivo es demostrar cómo un atacante puede posicionarse como Man-in-the-Middle (MitM) y redirigir el tráfico DNS de una víctima hacia un servidor falso.
-
-### Objetivo 
+## 🎯 Objetivo 
 
 El objetivo de este script es simular, en un entorno de laboratorio controlado, un ataque de ARP Spoofing y DNS Spoofing para posicionar al atacante como Man-in-the-Middle, interceptar el tráfico de red y redirigir consultas DNS hacia un servidor falso, con fines exclusivamente educativos y de análisis de seguridad.
 
@@ -51,67 +43,35 @@ Las capturas incluidas en este repositorio documentan el proceso completo del la
 - Ejecución del ataque ARP Spoofing
 - 
   <img width="672" height="137" alt="image" src="https://github.com/user-attachments/assets/5271155f-80c7-4320-933f-06a40b855aa9" />
+---
+-Archivo de configuración del DNS Spoofing
 
-- Archivo de configuración del DNS Spoofing
-- 
  <img width="672" height="160" alt="image" src="https://github.com/user-attachments/assets/2c0a73d3-dfde-465a-80b9-00b77d9392f6" />
-
-- Tráfico DNS interceptado
-- 
-  <img width="599" height="209" alt="image" src="https://github.com/user-attachments/assets/389a0665-f352-4451-90bd-3edfb956e11c" />
+ 
+---
+ -Tráfico DNS interceptado
+ 
+ - <img width="599" height="209" alt="image" src="https://github.com/user-attachments/assets/389a0665-f352-4451-90bd-3edfb956e11c" /> 
 ---
 - Redirección exitosa al sitio web falso
+ <img width="943" height="331" alt="image" src="https://github.com/user-attachments/assets/3b9a2936-b3b6-4118-967b-917abb1327ce" />
 
 ---
-
-## ✨ Características Principales
-
-| Característica | Descripción | Estado |
-|----------------|-------------|--------|
-| **Multi-vendor** | Soporte para Cisco, HP, Juniper | ✅ Operativo |
-| **VLAN Management** | Creación, modificación y eliminación de VLANs | ✅ Operativo |
-| **Security Audit** | Escaneo de vulnerabilidades conocidas | ✅ Operativo |
-| **Backup Config** | Respaldo automático de configuraciones | ✅ Operativo |
-| **API REST** | Integración con sistemas externos | 🚧 Beta |
-| **Web Dashboard** | Interfaz gráfica de monitoreo | 🚧 Desarrollo |
-
----
-
-## 📸 Capturas de Pantalla
-
-### Dashboard Principal
-
-![Dashboard Principal](./docs/screenshots/dashboard.png)
-
-*Vista general del estado de la red con métricas en tiempo real*
-
-### Configuración de VLANs
-
-![Configuración VLANs](./docs/screenshots/vlan-config.png)
-
-*Interfaz de configuración de VLANs con validación automática*
-
 ### Reporte de Seguridad
+Durante la ejecución del laboratorio se identificó que la red evaluada carece de mecanismos básicos de protección, lo que permitió la ejecución exitosa de ataques de ARP Spoofing y DNS Spoofing. La ausencia de segmentación, validación ARP y controles de integridad DNS representa un riesgo significativo para la confidencialidad e integridad de la información.
 
-![Security Report](./docs/screenshots/security-report.png)
+El impacto principal del ataque es la posibilidad de interceptar tráfico, redirigir a usuarios hacia sitios falsos y capturar información sensible. En un entorno real, este tipo de vulnerabilidad podría facilitar robo de credenciales, suplantación de identidad y propagación de malware.
 
-*Reporte detallado de auditoría de seguridad con recomendaciones*
+La implementación de controles como Dynamic ARP Inspection, segmentación por VLAN, DNS seguro y monitoreo activo permitiría reducir considerablemente la superficie de ataque.
 
-### Ejecución en CLI
+<img width="800" height="480" alt="image" src="https://github.com/user-attachments/assets/8d4047ce-06be-4be3-b6fd-9cc79531011f" />
+## 🔐 Evaluación de Seguridad
 
-```bash
-$ python network_tool.py --scan --target 192.168.1.0/24
 
-[INFO] Iniciando escaneo de red...
-[INFO] Dispositivos detectados: 15
-[OK]   Switch-Core-01 (192.168.1.1) - Configuración válida
-[WARN] Switch-Access-03 (192.168.1.10) - VLAN no autorizada detectada
-[OK]   Router-Edge-01 (192.168.1.254) - Sin vulnerabilidades
-[INFO] Generando reporte en /reports/scan_2024-02-06_14-30.pdf
-[SUCCESS] Escaneo completado en 45 segundos
+
+
 ```
 
----
 
 ## 🌐 Topología de Red
 
