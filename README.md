@@ -3,10 +3,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-yellow.svg)
-![Status](https://img.shields.io/badge/status-production-success.svg)
 
 *Herramienta automatizada para configuración, auditoría y seguridad de infraestructura de red*
 
@@ -384,20 +381,6 @@ Elementos de la red:
 3. Actualizar procedimientos y playbooks
 4. Entrenamiento del equipo
 ```
-
-
-
----
-
----
-
-
-## 📊 Estadísticas del Proyecto
-
-![GitHub stars](https://img.shields.io/github/stars/tu-usuario/network-security-tool)
-![GitHub forks](https://img.shields.io/github/forks/tu-usuario/network-security-tool)
-![GitHub issues](https://img.shields.io/github/issues/tu-usuario/network-security-tool)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/tu-usuario/network-security-tool)
 
 ---
 
