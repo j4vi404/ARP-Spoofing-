@@ -21,8 +21,6 @@
 - [Capturas de Pantalla](#-capturas-de-pantalla)
 - [Topología de Red](#-topología-de-red)
 - [Parámetros de Configuración](#-parámetros-de-configuración)
-- [Requisitos del Sistema](#-requisitos-del-sistema)
-- [Instalación](#-instalación)
 - [Uso y Ejemplos](#-uso-y-ejemplos)
 - [Medidas de Mitigación](#-medidas-de-mitigación)
 
