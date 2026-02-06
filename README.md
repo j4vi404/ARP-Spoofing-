@@ -66,6 +66,9 @@ pip install scapy
 
 ## Uso
 ```bash
+git clone https://github.com/j4vi404/ARP-Spoofing-.git
+cd /ARP-Spoofing-
+chmod +x ARP-Spoofing-
 sudo python3 ARP.py
 ```
 ## Características
