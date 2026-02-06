@@ -272,11 +272,11 @@ Elementos de la red:
 ### DNS Spoofing
 | Parámetro | Valor | Descripción |
 |-----------|-------|-------------|
-| **Dominio falso** | www.ejemplo.com | Dominio a suplantar |
-| **IP falsa** | 15.0.8.100 | IP del servidor malicioso |
+| **Dominio falso** | rondom.git.com | Dominio a suplantar |
+| **IP falsa** | 15.0.7.4 | IP del servidor malicioso |
 | **Puerto DNS** | 53 | Puerto estándar DNS |
 | **Protocolo** | UDP | Protocolo de transporte |
-| **TTL** | 300 | Tiempo de vida de la respuesta falsa |
+-------------------------------------------------
 ```
 
 
@@ -306,42 +306,11 @@ Elementos de la red:
 
 ---
 
-## 🚀 Modo de Uso 
-  
-Para su ejecución, basta con ejecutarlo utilizando Python3 con privilegios de superusuario.
-
-```bash
-sudo python3 ARP.py
-
-
-### Ejemplo 3: Auditoría de Seguridad
-
-```bash
-# Auditar cumplimiento PCI-DSS
-python network_tool.py audit --standard PCI-DSS --output pdf
-
-# Reporte generado:
-╔══════════════════════════════════════════════╗
-║      REPORTE DE AUDITORÍA PCI-DSS           ║
-╠══════════════════════════════════════════════╣
-║ Fecha: 2024-02-06 14:45:00                  ║
-║ Dispositivos auditados: 5                    ║
-║ Hallazgos críticos: 2                        ║
-║ Hallazgos altos: 5                           ║
-║ Hallazgos medios: 12                         ║
-║ Estado general: REQUIERE ATENCIÓN           ║
-╚══════════════════════════════════════════════╝
-
-Archivo generado: /reports/pci-dss-audit-2024-02-06.pdf
 ```
 
 ---
 
 ## 🛡️ Medidas de Mitigación
-
-### Análisis de Riesgos y Controles
-
-# 🛡️ Medidas de Mitigación
 
 ## Análisis de Riesgos y Controles - ARP Spoofing y DNS Spoofing
 
@@ -434,8 +403,7 @@ Archivo generado: /reports/pci-dss-audit-2024-02-06.pdf
 
 <div align="center">
 
-**Desarrollado con ❤️ por el equipo de Network Automation**
+**Practica 3 Seguridad de Redes**
 
-[Documentación](https://docs.network-tool.com) | [Changelog](CHANGELOG.md) | [Roadmap](ROADMAP.md)
 
 </div>
