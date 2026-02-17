@@ -131,43 +131,6 @@ La implementación de controles como Dynamic ARP Inspection, segmentación por V
 
 <img width="800" height="480" alt="image" src="https://github.com/user-attachments/assets/8d4047ce-06be-4be3-b6fd-9cc79531011f" />
 
-```
-
-
-## 🌐 Topología de Red
-
-### Diagrama de Topología
-
-                                  (Cloud)
-                                     |
-                    +----------------+----------------+
-                    |                                 |
-                 e0/0                               e0/0
-                  R-SD                              R-STG
-           (15.0.7.0/24)      10.0.0.0/30           (15.0.8.0/24)
-                 e0/2 -------------------------------- e0/2
-                    |                                   |
-                 e0/1              PNET              e0/1
-                    |                                   |
-                 e0/0                               e0/0
-                  SW-SD                             SW-STG
-                 /    \                             /    \
-              e0/2    e0/1                       e0/1    e0/2
-               |        |                         |        |
-              e0       e0                       eth0     eth0
-            Victima  Atacante                    TI       TI
-
-
-Elementos de la red:
-- MY HOUSE: Conexión a Internet/Cloud
-- R-SD: Router Santo Domingo (izquierda)
-- R-STG: Router Santiago (derecha)
-- SW-SD: Switch Santo Domingo (izquierda)
-- SW-STG: Switch Santiago (derecha)
-- PNET: Internet Provider (centro)
-
-```
-
 # Tabla de Interfaces
 # Direccionamiento Router R-SD (Santo Domingo)
 
